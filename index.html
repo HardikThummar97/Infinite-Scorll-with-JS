@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+      integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+      crossorigin="anonymous"
+    />
+    <title>Infnite Scroll</title>
+    <style>
+      body {
+        background-color: #e7f2f8;
+      }
+      .container {
+        overflow-y: scroll;
+        height: 85vh;
+        width: 70vw;
+        min-width: 300px;
+        margin: auto;
+      }
+      .container::-webkit-scrollbar {
+        width: 12px;
+      }
+
+      .container::-webkit-scrollbar-track {
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+        border-radius: 10px;
+      }
+
+      .container::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+      }
+      .content {
+        list-style: none;
+      }
+      .user {
+        display: grid;
+        padding: 0.5em;
+        margin: 0.5em;
+        background-color: #74bdcb;
+        grid-template-columns: 1fr 10fr;
+        gap: 15px;
+        align-items: center;
+        border-radius: 5px;
+        box-shadow: rgba(106, 127, 133, 0.24) 0px 3px 8px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1 style="text-align: center">Keep Scrolling !</h1>
+    <div class="container">
+      <ul class="content">
+        <!-- <li class="user">
+        <div>
+          <img
+            src="https://robohash.org/autemrepellatcum.png?size=50x50&set=set1"
+            alt="user"
+          />
+        </div>
+        <div>
+          <h2>Hardik Thummar</h2>
+          <p>Roll number: 1</p>
+        </div>
+      </li> -->
+      </ul>
+    </div>
+  </body>
+</html>
+<script>
+  const load = async (page = 1) => {
+    let content = document.querySelector(".content");
+
+    let data = await fetch(
+      `http://localhost:3001/users?_page=${page}&_limit=25`
+    ).then((res) => res.json());
+
+    data.forEach((user) => {
+      let li = document.createElement("li");
+      li.innerHTML = `
+        <div class="user">
+          <div>
+            <img
+              src=${user.profile}
+              alt="user${user.rollNo}"
+            />
+          </div>
+          <div>
+            <h2>${user.name}</h2>
+            <p>Roll number: ${user.rollNo}</p>
+          </div>
+        </div>`;
+      content.append(li);
+    });
+  };
+
+  let page = 1;
+  load(page);
+
+  let container = document.querySelector(".container");
+  container.addEventListener("scroll", () => {
+    const { scrollHeight, scrollTop, clientHeight } = container;
+
+    if (scrollTop + clientHeight >= scrollHeight) {
+      page++;
+      load(page);
+    }
+  });
+</script>
